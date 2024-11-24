@@ -68,6 +68,11 @@ Array of terminal characters
 default_grammar
 3
 # 3 表示该语法已经有三个终结符序列样例
+
+add_multiply
+1
+
+
 ```
 
 终结符序列文件：`{name}_instance{index}_input.txt`
