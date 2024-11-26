@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX_NUMBER_OF_SYMB (100)
 #define MAX_NUMBER_OF_PROD (1000)
@@ -32,5 +33,15 @@ struct trans_result {
   int t; /* 0 for shift and 1 for reduce */
   int id; /* the id of destination state (in the case of shift), or the id of production (in the case of reduction) */
 };
+
+struct array {
+  int * elements;
+  int len;
+};
+
+bool check_feasible(struct array a, struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
+
+void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow, 
+                struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 
 #endif // CFG_H_INCLUDED
