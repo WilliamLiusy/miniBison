@@ -8,4 +8,3 @@ struct prod grammar[MAX_NUMBER_OF_PROD];
 /* outputs: */
 struct state state_info[MAX_NUMBER_OF_STATE];
 struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB];
-

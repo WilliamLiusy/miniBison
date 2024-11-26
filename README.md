@@ -2,6 +2,15 @@
 
 为了保持一致，请使用 linux 平台。
 
+使用如下数据结构：
+
+```
+struct array{
+    int l;  // 长度
+    int *a;  // 元素
+};
+```
+
 ## 分工
 
 1. NFA DFA
@@ -86,21 +95,29 @@ zyy 给 xmt 的文件的命名：`{name}_instance{index}_output.txt`
 ## 接口
 
 cys：
-给你整数列（字符串），告诉我 T/F，表示可行/不可行
+判断是否是可行结构(给 lsy 用的)
+(使用了状态转移表作为参数)
 
 ```
-bool check(int number_of_symbol, int number_of_prod, prod *grammar, array *follow, int *a, int l)
+bool check_feasible(struct array a, struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
+```
+
+预处理出状态转移表（给 zyy 用的）
+约定：编号为 0 的状态是初始状态。
+
+```
+void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow,
+                struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 ```
 
 ---
 
-lsy：
+lsy：实现如下函数
 
 ```
-struct array{
-    int l;  // 长度
-    int *a;  // 元素
-} follow[MAX_NUMBER_OF_SYMBOLS], first[MAX_NUMBER_OF_SYMBOLS];
+struct array get_first(int number_of_symbol, int number_of_prod, struct prod *grammar);
+
+struct array get_follow(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array first);
 ```
 
 ---
