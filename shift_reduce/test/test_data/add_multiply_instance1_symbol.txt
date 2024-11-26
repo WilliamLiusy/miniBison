@@ -1,0 +1,22 @@
+input: ID * (ID + ID)
+
+output: 
+|ID * (ID + ID)
+ID| * (ID + ID)
+G| * (ID + ID)
+F| * (ID + ID)
+F *| (ID + ID)
+F * (|ID + ID)
+F * (ID| + ID)
+F * (G| + ID)
+F * (F| + ID)
+F * (E| + ID)
+F * (E +| ID)
+F * (E + ID|)
+F * (E + G|)
+F * (E + F|)
+F * (E|)
+F * (E)|
+F * G|
+F|
+E|
