@@ -1,6 +1,9 @@
 import os
 from prod import Prod
 
+# instance_index: 1~3
+instance_index = 3
+
 ## read the prod table
 grammar_file_path = "./test_data/grammar_add_multiply.txt"
 grammar = []
@@ -31,7 +34,7 @@ with open(grammar_file_path, "r") as f:
     
         
 ## read the input array
-input_file_path = "./test_data/add_multiply_instance1_input.txt"
+input_file_path = f"./test_data/add_multiply_instance{instance_index}_input.txt"
 
 expr_array = []
 with open(input_file_path, "r") as f:
@@ -48,7 +51,7 @@ with open(input_file_path, "r") as f:
         exit(2)
     
 ## read the output array
-output_file_name = "./test_data/add_multiply_instance1_output.txt"
+output_file_name = f"./test_data/add_multiply_instance{instance_index}_output.txt"
 oper_array = []
 with open(output_file_name, "r") as f:
     try: 
