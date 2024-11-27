@@ -1,8 +1,8 @@
 import os
 from prod import Prod
 
-# instance_index: 1~3
-instance_index = 3
+# instance_index: 1~4
+instance_index = 4
 
 ## read the prod table
 grammar_file_path = "./test_data/grammar_add_multiply.txt"
