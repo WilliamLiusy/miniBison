@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define MAX_NUMBER_OF_SYMB (100)
 #define MAX_NUMBER_OF_PROD (1000)
