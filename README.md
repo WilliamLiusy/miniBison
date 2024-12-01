@@ -81,7 +81,7 @@ default_grammar
 # 3 表示该语法已经有三个终结符序列样例
 
 add_multiply
-1
+4
 
 
 ```
