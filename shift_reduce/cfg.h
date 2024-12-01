@@ -42,7 +42,7 @@ struct array {
 
 bool check_feasible(struct array a, struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 
-void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow, 
-                struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
+void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow,
+              struct state state_info[MAX_NUMBER_OF_STATE], struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 
 #endif // CFG_H_INCLUDED
