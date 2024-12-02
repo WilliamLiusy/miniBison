@@ -35,6 +35,7 @@ lsy: 4
 
 ```
 # N 表示符号数量（0-based） M 表示产生式数量（0-based）
+# 要加入 start -> E 这个产生式, 且应该放在第一条（E只是举例子），start 记作 -1
 
 N M
 prod 1
@@ -45,7 +46,8 @@ prod M
 # 样例
 # 产生式的第一个数表示产生式的右边的符号数量，第二个数表示产生式左边的符号，之后的数表示右边的符号序列
 
-4 2
+4 3
+1 -1 1
 3 1 2 3 0
 1 1 2
 ```
@@ -97,29 +99,26 @@ zyy 给 xmt 的文件的命名：`{name}_instance{index}_output.txt`
 ## 接口
 
 cys：
-判断是否是可行结构(给 lsy 用的)
-(使用了状态转移表作为参数)
 
-```
-bool check_feasible(struct array a, struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
-```
-
-预处理出状态转移表（给 zyy 用的）
+check_feasible: 检查给定序列是否是一个合法状态（需要用到状态转移表）
+pre_trans: 预处理出状态转移表（给 zyy 用的）
 约定：编号为 0 的状态是初始状态。
 
 ```
-void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow,
-                struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
+bool check_feasible(struct array a);
+
+void pre_trans();
 ```
 
 ---
 
 lsy：实现如下函数
+**Note: first 和 follow 都是全局变量，都被定义在了 cfg.h 中**
 
 ```
-struct array get_first(int number_of_symbol, int number_of_prod, struct prod *grammar);
+struct array get_first();
 
-struct array get_follow(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array first);
+struct array get_follow();
 ```
 
 ---
