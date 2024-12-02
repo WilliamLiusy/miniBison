@@ -97,29 +97,26 @@ zyy 给 xmt 的文件的命名：`{name}_instance{index}_output.txt`
 ## 接口
 
 cys：
-判断是否是可行结构(给 lsy 用的)
-(使用了状态转移表作为参数)
 
-```
-bool check_feasible(struct array a, struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
-```
-
-预处理出状态转移表（给 zyy 用的）
+check_feasible: 检查给定序列是否是一个合法状态（需要用到状态转移表）
+pre_trans: 预处理出状态转移表（给 zyy 用的）
 约定：编号为 0 的状态是初始状态。
 
 ```
-void pre_trans(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array *follow,
-                struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
+bool check_feasible(struct array a);
+
+void pre_trans();
 ```
 
 ---
 
 lsy：实现如下函数
+**Note: first 和 follow 都是全局变量，都被定义在了 cfg.h 中**
 
 ```
-struct array get_first(int number_of_symbol, int number_of_prod, struct prod *grammar);
+struct array get_first();
 
-struct array get_follow(int number_of_symbol, int number_of_prod, struct prod *grammar, struct array first);
+struct array get_follow();
 ```
 
 ---
