@@ -63,7 +63,7 @@ bool check_feasible(struct array a)
     int current_state = 0;
     for (int i = 0; i < a.len; i++)
     {
-        printf("current_state = %d\n", current_state);
+        // printf("current_state = %d\n", current_state);
         int symbol = a.elements[i];
         if (trans[current_state][symbol].t == 0)
         {

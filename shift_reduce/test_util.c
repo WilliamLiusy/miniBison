@@ -6,10 +6,10 @@ void test_check_feasible()
 {
     struct array a;
     a.elements = (int*)malloc(MAX_NUMBER_OF_SYMB * sizeof(int));
-    a.len = 1;
-    a.elements[0] = 7;
-    a.elements[1] = 3;
-    a.elements[2] = 1;
+    a.len = 3;
+    a.elements[0] = 5;
+    a.elements[1] = 0;
+    a.elements[2] = 6;
 
     bool result = check_feasible(a);
     printf("check_feasible: %s\n", result ? "true" : "false");

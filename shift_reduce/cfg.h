@@ -74,17 +74,29 @@ void read_in_grammar(char* filename);
 
 // 以下是一些辅助函数
 
+// return trur if a < b
 bool cmp_handler(struct handler a, struct handler b);
 
+// return true if a == b
 bool eq_handler(struct handler a, struct handler b);
 
-void expand_state(struct state* current_state_ptr);
-
+// 移入symbol，将符合移入条件的产生式存储在新状态中（此时
+// 新的状态并不完整）
+// new_state 的空间需要在外部分配
 void shift_in(struct state current_state, int symbol,
               struct state* new_state_ptr);
 
+// 对于移入后得到的新状态，将其扩展为完整的状态
+// 并按照产生式的顺序进行排序
+void expand_state(struct state* current_state_ptr);
+
+// 找到在某个状态下可以规约并且规约后仍然是可行结构的所有产生式
+// state_history 是记录状态的栈，用于在规约后回溯状态
 struct array get_available_prod(int current_state, struct array* state_history);
 
+// 通过dfs遍历所有结点并生成状态转移表
+// state_history 是记录状态的栈，用于查找可用的规约
+// dfs_trans 会调用 get_available_prod
 void dfs_trans(struct array* state_history);
 
 // 打印编号为 prod_id 的产生式
