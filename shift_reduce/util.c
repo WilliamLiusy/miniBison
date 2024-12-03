@@ -1,11 +1,69 @@
 // lsy 和 cys 提供的函数的定义
-#include <cfg.h>
+#include "cfg.h"
+
+void read_in_grammar(char* filename)
+{
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Error: cannot open file %s\n", filename);
+        exit(1);
+    }
+
+    fscanf(fp, "%d %d", &number_of_symb, &number_of_prod);
+    for (int i = 0; i < number_of_prod; i++)
+    {
+        fscanf(fp, "%d", &grammar[i].len);
+        fscanf(fp, "%d", &grammar[i].l);
+        grammar[i].r = (int*)malloc(grammar[i].len * sizeof(int));
+        for (int j = 0; j < grammar[i].len; j++)
+        {
+            fscanf(fp, "%d", &grammar[i].r[j]);
+        }
+    }
+    fclose(fp);
+}
+
+void print_prod(int prod_id)
+{
+    printf("prod_id = %d: ", prod_id);
+    printf("%d -> ", grammar[prod_id].l);
+    for (int i = 0; i < grammar[prod_id].len; i++)
+    {
+        printf("%d ", grammar[prod_id].r[i]);
+    }
+    printf("\n");
+}
+
+void print_state(struct state s)
+{
+    printf("---------print_state-------------\n");
+    printf("size of the state = %d\n", s.size);
+    for (int i = 0; i < s.size; i++)
+    {
+        printf("prod_id = %d, dot_pos = %d\n", s.s[i].prod_id, s.s[i].dot_pos);
+    }
+    printf("--------------------\n");
+}
+
+void print_array(struct array a)
+{
+    printf("---------print_array-------------\n");
+    printf("len = %d\n", a.len);
+    for (int i = 0; i < a.len; i++)
+    {
+        printf("%d ", a.elements[i]);
+    }
+    printf("\n");
+    printf("--------------------\n");
+}
 
 bool check_feasible(struct array a)
 {
     int current_state = 0;
     for (int i = 0; i < a.len; i++)
     {
+        printf("current_state = %d\n", current_state);
         int symbol = a.elements[i];
         if (trans[current_state][symbol].t == 0)
         {
@@ -35,17 +93,17 @@ bool eq_handler(struct handler a, struct handler b)
 // expand the state
 // used in pre_trans
 // current_state 是指向待扩展的状态的指针
-void expand_state(struct state* current_state)
+void expand_state(struct state* current_state_ptr)
 {
     bool used[number_of_symb];
     memset(used, 0, sizeof(used));
-    int current_length = current_state->size;
+    int current_length = current_state_ptr->size;
 
     for (int i = 0; i < current_length; ++i)
     {
-        int prod_id = current_state->s[i].prod_id;
+        int prod_id = current_state_ptr->s[i].prod_id;
         int prod_len = grammar[prod_id].len;
-        int dot_pos = current_state->s[i].dot_pos;
+        int dot_pos = current_state_ptr->s[i].dot_pos;
         if (dot_pos == prod_len)
         {
             continue;
@@ -63,28 +121,28 @@ void expand_state(struct state* current_state)
                 struct handler tmp;
                 tmp.prod_id = j;
                 tmp.dot_pos = 0;
-                current_state->s[current_length++] = tmp;
+                current_state_ptr->s[current_length++] = tmp;
             }
         }
     }
-    current_state->size = current_length;
+    current_state_ptr->size = current_length;
 
     // sort the handlers in the state
     for (int i = 0; i < current_length; ++i)
     {
-        for (int j = i + 1; j < current_state->size; ++j)
+        for (int j = i + 1; j < current_state_ptr->size; ++j)
         {
-            if (eq_handler(current_state->s[i], current_state->s[j]))
+            if (eq_handler(current_state_ptr->s[i], current_state_ptr->s[j]))
             {
                 fprintf(stderr,
                         "Error: two handlers have the same production id\n");
                 exit(1);
             }
-            if (cmp_handler(current_state->s[j], current_state->s[i]))
+            if (cmp_handler(current_state_ptr->s[j], current_state_ptr->s[i]))
             {
-                struct handler tmp = current_state->s[i];
-                current_state->s[i] = current_state->s[j];
-                current_state->s[j] = tmp;
+                struct handler tmp = current_state_ptr->s[i];
+                current_state_ptr->s[i] = current_state_ptr->s[j];
+                current_state_ptr->s[j] = tmp;
             }
         }
     }
@@ -92,9 +150,10 @@ void expand_state(struct state* current_state)
 
 // 移入符号
 // new_state 的空间需要在外部分配
-void shift_in(struct state current_state, int symbol, struct state* new_state)
+void shift_in(struct state current_state, int symbol,
+              struct state* new_state_ptr)
 {
-    new_state->size = 0;
+    new_state_ptr->size = 0;
     for (int i = 0; i < current_state.size; ++i)
     {
         int prod_id = current_state.s[i].prod_id;
@@ -105,7 +164,7 @@ void shift_in(struct state current_state, int symbol, struct state* new_state)
             struct handler tmp;
             tmp.prod_id = prod_id;
             tmp.dot_pos = dot_pos + 1;
-            new_state->s[new_state->size++] = tmp;
+            new_state_ptr->s[new_state_ptr->size++] = tmp;
         }
     }
 }
@@ -176,9 +235,18 @@ void dfs_trans(struct array* state_history)
 {
     int current_state = state_history->elements[state_history->len - 1];
 
+    // printf("current_state = %d\n", current_state);
+    // printf("shift from state %d\n",
+    //        state_history->len > 1
+    //            ? state_history->elements[state_history->len - 2]
+    //            : -1);
+    // print_state(state_info[current_state]);
+
     // 查找目前状态可用的规约产生式
     struct array available_prod =
         get_available_prod(current_state, state_history);
+
+    // print_array(available_prod);
 
     // 遍历所有可能的下一个符号，递归寻找新状态并生成trans数组
     for (int i = 0; i < number_of_symb; ++i)
@@ -195,12 +263,12 @@ void dfs_trans(struct array* state_history)
             bool flag = false;
 
             // 检查新状态是否已经存在
-            for (int i = 0; i < state_num; ++i)
+            for (int j = 0; j < state_num; ++j)
             {
-                if (eq_state(new_state, state_info[i]))
+                if (eq_state(new_state, state_info[j]))
                 {
                     trans[current_state][i].t = 0;
-                    trans[current_state][i].id = i;
+                    trans[current_state][i].id = j;
                     flag = true;
                     free(new_state.s);
                     break;
@@ -212,6 +280,9 @@ void dfs_trans(struct array* state_history)
             {
                 state_info[state_num++] = new_state;
                 state_history->elements[state_history->len++] = state_num - 1;
+                trans[current_state][i].t = 0;
+                trans[current_state][i].id = state_num - 1;
+                // printf("shift in symbol %d\n", i);
                 dfs_trans(state_history);
                 state_history->len--;
             }
@@ -222,6 +293,7 @@ void dfs_trans(struct array* state_history)
             // 先释放不需要的内存
             free(new_state.s);
 
+            bool flag = false;
             // 对于所有可行的产生式检查 follow 集合
             for (int j = 0; j < available_prod.len; ++j)
             {
@@ -231,8 +303,15 @@ void dfs_trans(struct array* state_history)
                 {
                     trans[current_state][i].t = 1;
                     trans[current_state][i].id = prod_id;
+                    flag = true;
                     break;
                 }
+            }
+
+            if (!flag)
+            {
+                trans[current_state][i].t = -1;
+                trans[current_state][i].id = -1;
             }
         }
     }

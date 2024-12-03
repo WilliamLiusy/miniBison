@@ -10,21 +10,6 @@
 #define MAX_NUMBER_OF_PROD (1000)
 #define MAX_NUMBER_OF_STATE (10000)
 
-// 全局变量
-/* inputs: */
-int number_of_symb; /* number of symbols */
-int number_of_prod; /* number of productions */
-struct prod grammar[MAX_NUMBER_OF_PROD];
-
-/* outputs: */
-struct state state_info[MAX_NUMBER_OF_STATE];
-struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB];
-
-/* other */
-int state_num = 0;
-bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
-bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
-
 /* id of symbols are 0, 1, ... */
 /* id of productions are 0, 1, ... */
 
@@ -61,9 +46,31 @@ struct array
     int len;
 };
 
+// 全局变量
+/* inputs: */
+int number_of_symb; /* number of symbols */
+int number_of_prod; /* number of productions */
+struct prod grammar[MAX_NUMBER_OF_PROD];
+
+/* outputs: */
+struct state state_info[MAX_NUMBER_OF_STATE];
+struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB];
+
+/* other */
+int state_num = 0;
+bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
+bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
+
+// 用于检查给定的字符序列 a 是否是可行结构
+// 该函数会用到状态转移表，因此在调用这个函数之前必须先预处理出状态转移表
 bool check_feasible(struct array a);
 
+// 预处理出状态转移表以及所有结点上的状态信息
+// 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
 void pre_trans();
+
+// 读入语法规则
+void read_in_grammar(char* filename);
 
 // 以下是一些辅助函数
 
@@ -71,12 +78,22 @@ bool cmp_handler(struct handler a, struct handler b);
 
 bool eq_handler(struct handler a, struct handler b);
 
-void expand_state(struct state* current_state);
+void expand_state(struct state* current_state_ptr);
 
-void shift_in(struct state current_state, int symbol, struct state* new_state);
+void shift_in(struct state current_state, int symbol,
+              struct state* new_state_ptr);
 
 struct array get_available_prod(int current_state, struct array* state_history);
 
 void dfs_trans(struct array* state_history);
+
+// 打印编号为 prod_id 的产生式
+void print_prod(int prod_id);
+
+// 打印状态
+void print_state(struct state s);
+
+// 打印数组
+void print_array(struct array);
 
 #endif  // CFG_H_INCLUDED

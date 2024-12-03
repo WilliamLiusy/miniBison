@@ -1,3 +1,4 @@
+START -> E
 E -> F
 E -> E + F
 F -> G
