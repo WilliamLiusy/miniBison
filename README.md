@@ -4,11 +4,55 @@
 
 使用如下数据结构：
 
+## 注意事项
+
+1、额外定义了如下数据结构。
 ```
 struct array{
     int l;  // 长度
     int *a;  // 元素
 };
+```
+
+2、目前的实现中，输入的语法、生成的Follow集合、状态转移表以及所有结点的状态信息都是全局变量。其定义都在`cfg.h`中。
+```
+// 全局变量
+/* inputs: */
+int number_of_symb; /* number of symbols */
+int number_of_prod; /* number of productions */
+struct prod grammar[MAX_NUMBER_OF_PROD];
+
+/* outputs: */
+struct state state_info[MAX_NUMBER_OF_STATE];
+struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB];
+
+/* other */
+int state_num = 0;
+bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
+bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
+```
+
+3、目前已经实现的函数的声明都在`cfg.h`中，可自行查阅，以下是几个可能会用到的函数：
+```
+// 用于检查给定的字符序列 a 是否是可行结构
+// 该函数会用到状态转移表，因此在调用这个函数之前必须先预处理出状态转移表
+bool check_feasible(struct array a);
+
+// 预处理出状态转移表以及所有结点上的状态信息
+// 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
+void pre_trans();
+
+// 读入语法规则
+void read_in_grammar(char* filename);
+
+// 打印编号为 prod_id 的产生式
+void print_prod(int prod_id);
+
+// 打印状态
+void print_state(struct state s);
+
+// 打印数组
+void print_array(struct array);
 ```
 
 ## 分工
