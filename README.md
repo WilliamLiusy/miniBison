@@ -55,6 +55,8 @@ void print_state(struct state s);
 void print_array(struct array);
 ```
 
+4、生成的可执行文件请放在 `./shift_reduce/bin` 路径中
+
 ## 分工
 
 1. NFA DFA
