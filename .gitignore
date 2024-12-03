@@ -1,0 +1,4 @@
+# Ignore binary files
+shift_reduce/bin/
+
+.clang-format
