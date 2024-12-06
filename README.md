@@ -117,22 +117,6 @@ Array of terminal characters
 
 示例：`grammar_add.txt`
 
-为了避免重名，要加入新的样例的时候请在 `README.md` 里同步更新。
-
-样例列表：
-
-```
-# 示例
-default_grammar
-3
-# 3 表示该语法已经有三个终结符序列样例
-
-add_multiply
-4
-
-
-```
-
 终结符序列文件：`{name}_instance{index}_input.txt`
 
 示例：`add_instance1_input.txt`
@@ -176,7 +160,7 @@ zyy：
 
 每行一个整数 x，若为 -1 表示移入， 否则表示使用第 x 个产生式进行规约 (无需输出步骤次数)
 
-cys 和 lsy 提供的都是函数，zyy 需要使用这些函数来搭建最终的 `main` 函数。
+cys 和 lsy 提供的都是函数，zyy 需要使用这些函数来搭建最终的两个 **接口** 函数。
 
 由于 C 可能需要频繁使用 `malloc` 分配内存，因此在 `main` 函数中要注意内存的回收。
 
