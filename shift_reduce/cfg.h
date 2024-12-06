@@ -13,6 +13,7 @@
 /* id of symbols are 0, 1, ... */
 /* id of productions are 0, 1, ... */
 
+
 struct prod
 {
     int l;   /* the symbol on the left */
@@ -51,6 +52,8 @@ struct array
 int number_of_symb; /* number of symbols */
 int number_of_prod; /* number of productions */
 struct prod grammar[MAX_NUMBER_OF_PROD];
+struct array terminal;
+struct array non_terminal;
 
 /* outputs: */
 struct state state_info[MAX_NUMBER_OF_STATE];
@@ -69,7 +72,7 @@ bool check_feasible(struct array a);
 // 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
 void pre_trans();
 
-// 读入语法规则
+// 读入语法规则 并判断了终结符和非终结符
 void read_in_grammar(char* filename);
 
 // 以下是一些辅助函数
@@ -99,13 +102,28 @@ struct array get_available_prod(int current_state, struct array* state_history);
 // dfs_trans 会调用 get_available_prod
 void dfs_trans(struct array* state_history);
 
+// 调用后即可全局变量即为 first和follow 集合
+void getFirst();
+void getFollow();
+
+// 返回语法是否会使得移入规约算法冲突，有冲突返回 true
+bool check_ShiftReduce_ambiguity();
+
 // 打印编号为 prod_id 的产生式
 void print_prod(int prod_id);
+
+// 打印终结符和非终结符
+void print_terminal_and_nonterminal();
 
 // 打印状态
 void print_state(struct state s);
 
 // 打印数组
 void print_array(struct array);
+
+// 打印 first和follow 集合
+void printFirst();
+void printFollow();
+
 
 #endif  // CFG_H_INCLUDED

@@ -54,10 +54,19 @@ int main()
 
     // printf("number_of_symb: %d\n", number_of_symb);
     // print_prod(2);
-
+    print_terminal_and_nonterminal();
     // test_shift_in_expand();
+
 
     pre_trans();
 
     test_check_feasible();
+
+
+    
+    getFirst();
+    getFollow();
+    printFirst();
+    printFollow();
+    printf("check_ShiftReduce_ambuiguity: %s\n", check_ShiftReduce_ambuiguity() ? "true" : "false");
 }

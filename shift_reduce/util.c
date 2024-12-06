@@ -21,6 +21,30 @@ void read_in_grammar(char* filename)
             fscanf(fp, "%d", &grammar[i].r[j]);
         }
     }
+
+    // get Terminal and NonTerminal
+    int flag[number_of_symb];
+    memset(flag, 0, sizeof(flag));
+    terminal.elements = (int*)malloc(number_of_symb * sizeof(int));
+    non_terminal.elements = (int*)malloc(number_of_symb * sizeof(int));
+    // I should ignore 0th production, which is START -> x
+    for (int i = 1; i < number_of_prod; i++)
+    {
+        if(flag[grammar[i].l] == 0)
+        {
+            printf("%s","!");
+            flag[grammar[i].l] = 1;
+            non_terminal.len++;
+            non_terminal.elements[non_terminal.len - 1] = grammar[i].l;
+        }
+    }
+    for (int i = 0; i < number_of_symb; i++) {
+        if(flag[i] == 0) {
+            printf("%s","#");
+            terminal.len++;
+            terminal.elements[terminal.len - 1] = i;
+        }
+    }
     fclose(fp);
 }
 
@@ -31,6 +55,19 @@ void print_prod(int prod_id)
     for (int i = 0; i < grammar[prod_id].len; i++)
     {
         printf("%d ", grammar[prod_id].r[i]);
+    }
+    printf("\n");
+}
+
+void print_terminal_and_nonterminal() {
+    printf("Terminal: ");
+    for(int i = 0; i < terminal.len; i++) {
+        printf("%d ", terminal.elements[i]);
+    }
+    printf("\n");
+    printf("NonTerminal: ");
+    for(int i = 0; i < non_terminal.len; i++) {
+        printf("%d ", non_terminal.elements[i]);
     }
     printf("\n");
 }
@@ -342,4 +379,208 @@ void pre_trans()
     state_history.elements[0] = 0;
 
     dfs_trans(&state_history);
+}
+
+
+void getFirst() {
+    for(int i = 0; i < terminal.len; i++) {
+        int T = terminal.elements[i];
+        first[T][T] = 1;
+    }
+    bool changed = false;
+    do {
+        changed = false;
+        // I should ignore 0th production, which is START -> x
+        for(int i = 1; i < number_of_prod; i++) {
+            int Y = grammar[i].l;
+            int Z = grammar[i].r[0];
+            for(int u = 0; u < number_of_symb; u++) {
+                if(first[Z][u]) {
+                    if(first[Y][u] == 0) {
+                        first[Y][u] = 1;
+                        changed = true;
+                    }
+                }
+            }
+        }
+    } while(changed);
+}
+
+void getFollow() {
+    // I should ignore 0th production, which is START -> x
+    for(int i = 1; i < number_of_prod; i++) {
+        for(int j = 0; j + 1 < grammar[i].len; j++) {
+            for(int u = 0; u < number_of_symb; u++) {
+                if(first[grammar[i].r[j + 1]][u]) {
+                    if(follow[grammar[i].r[j]][u] == 0) {
+                        follow[grammar[i].r[j]][u] = 1;
+                    }
+                }
+            }
+        }
+    }
+    bool changed = false;
+    do {
+        changed = false;
+        // I should ignore 0th production, which is START -> x
+        for(int r = 1; r < number_of_prod; r++) {
+            int Z = grammar[r].l;
+            int Y = grammar[r].r[grammar[r].len - 1];
+            for(int u = 0; u < number_of_symb; u++) {
+                if(follow[Z][u]) {
+                    if(follow[Y][u] == 0) {
+                        follow[Y][u] = 1;
+                        changed = true;
+                    }
+                }
+            }
+        }
+    } while(changed);
+}
+
+void printFirst() {
+    for(int i = 0; i < number_of_symb; i++) {
+        printf("First[%d]: ", i);
+        for(int j = 0; j < number_of_symb; j++) {
+            if(first[i][j]) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
+    }
+}
+
+void printFollow() {
+    for(int i = 0; i < number_of_symb; i++) {
+        printf("Follow[%d]: ", i);
+        for(int j = 0; j < number_of_symb; j++) {
+            if(follow[i][j]) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
+    }
+}
+
+
+bool check_ShiftReduce_ambuiguity() {
+    // shift-reduce conflict
+    // 找一个是另一个前缀
+    for(int i = 1; i < number_of_prod; i++) {
+        for(int j = 1; j < number_of_prod; j++) {
+            if(i == j) {
+                continue;
+            }
+            if(grammar[i].len >= grammar[j].len) {
+                continue;
+            }
+            bool flag = true;
+            for(int k = 0; k < grammar[i].len; k++) {
+                if(grammar[i].r[k] != grammar[j].r[k]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag) {
+                // i 是 j 的前缀
+                // i : V -> X.
+                // j : U -> X.aY
+                int V = grammar[i].l;
+                int U = grammar[j].l;
+                int a = grammar[j].r[grammar[i].len];
+                // 若 a \in Follow(V) 则冲突
+                int flag2 = follow[V][a];
+
+                // 若两个产生式在dfa一个状态集里，则冲突
+                int flag1 = false;
+                for(int s = 0; s < state_num; s++) {
+                    bool i_in = false;
+                    bool j_in = false;
+                    for(int l = 0; l < state_info[s].size; l++) {
+                        if(state_info[s].s[l].prod_id == i && state_info[s].s[l].dot_pos == grammar[i].len) {
+                            i_in = true;
+                            break;
+                        }
+                    }
+                    for(int l = 0; l < state_info[s].size; l++) {
+                        if(state_info[s].s[l].prod_id == j && state_info[s].s[l].dot_pos == grammar[i].len) {
+                            j_in = true;
+                            break;
+                        }
+                    }
+                    if(i_in && j_in) {
+                        flag1 = true;
+                        break;
+                    }
+                }
+                if(flag1 && flag2) {
+                    // printf("%s\n","!!!");
+                    return true;
+                }
+            }
+        }
+    }
+
+    // reduce-reduce conflict
+    // 找一个是另一个后缀
+    for(int i = 1; i < number_of_prod; i++) {
+        for(int j = 1; j < number_of_prod; j++) {
+            if(i == j) {
+                continue;
+            }
+            if(grammar[i].len > grammar[j].len) {
+                continue;
+            }
+            bool flag = true;
+            for(int k = 0; k < grammar[i].len; k++) {
+                if(grammar[i].r[grammar[i].len - 1 - k] != grammar[j].r[grammar[j].len - 1 - k]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag) {
+                // i 是 j 的后缀
+                // i : V -> Y.
+                // j : U -> XY.
+                int V = grammar[i].l;
+                int U = grammar[j].l;
+                // 若 Follow(U) 交 Follow(V) 不为空 则冲突
+                int flag2 = false;
+                for(int a = 0; a < number_of_symb; a++) {
+                    if(follow[U][a] && follow[V][a]) {
+                        flag2 = true;
+                        break;
+                    }
+                }
+
+                // 若两个产生式在dfa一个状态集里，则冲突
+                int flag1 = false;
+                for(int s = 0; s < state_num; s++) {
+                    bool i_in = false;
+                    bool j_in = false;
+                    for(int l = 0; l < state_info[s].size; l++) {
+                        if(state_info[s].s[l].prod_id == i && state_info[s].s[l].dot_pos == grammar[i].len) {
+                            i_in = true;
+                            break;
+                        }
+                    }
+                    for(int l = 0; l < state_info[s].size; l++) {
+                        if(state_info[s].s[l].prod_id == j && state_info[s].s[l].dot_pos == grammar[j].len) {
+                            j_in = true;
+                            break;
+                        }
+                    }
+                    if(i_in && j_in) {
+                        flag1 = true;
+                        break;
+                    }
+                }
+                if(flag1 && flag2) {
+                    // printf("%s\n","$$$");
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
