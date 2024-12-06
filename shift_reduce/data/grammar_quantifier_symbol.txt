@@ -1,0 +1,10 @@
+START -> P
+P -> QUANTIFIER ID , P
+P -> Q
+Q -> R
+R -> S
+S -> ID
+P -> P || Q
+Q -> Q && R
+R -> ! S
+S -> ( P )

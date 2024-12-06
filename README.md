@@ -7,6 +7,7 @@
 ## 注意事项
 
 1、额外定义了如下数据结构。
+
 ```
 struct array{
     int l;  // 长度
@@ -14,48 +15,46 @@ struct array{
 };
 ```
 
-2、目前的实现中，输入的语法、生成的Follow集合、状态转移表以及所有结点的状态信息都是全局变量。其定义都在`cfg.h`中。
-```
-// 全局变量
-/* inputs: */
-int number_of_symb; /* number of symbols */
-int number_of_prod; /* number of productions */
-struct prod grammar[MAX_NUMBER_OF_PROD];
+2、目前已经实现的函数的声明都在`cfg.h`中，可自行查阅，以下是几个可能会用到的函数：
 
-/* outputs: */
-struct state state_info[MAX_NUMBER_OF_STATE];
-struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB];
-
-/* other */
-int state_num = 0;
-bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
-bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB];
 ```
+// 读入语法规则 并判断了终结符和非终结符
+void read_in_grammar(char *filename, int *number_of_symb, int *number_of_prod,
+                     struct prod grammar[MAX_NUMBER_OF_PROD]);
 
-3、目前已经实现的函数的声明都在`cfg.h`中，可自行查阅，以下是几个可能会用到的函数：
-```
-// 用于检查给定的字符序列 a 是否是可行结构
-// 该函数会用到状态转移表，因此在调用这个函数之前必须先预处理出状态转移表
-bool check_feasible(struct array a);
+// 调用后全局变量即为 first和follow 集合
+void getFirst(int number_of_symb, int number_of_prod,
+              struct prod grammar[MAX_NUMBER_OF_PROD],
+              bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB]);
+void getFollow(int number_of_symb, int number_of_prod,
+               struct prod grammar[MAX_NUMBER_OF_PROD],
+               bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB],
+               bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB]);
 
 // 预处理出状态转移表以及所有结点上的状态信息
 // 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
-void pre_trans();
+void pre_trans(
+    int number_of_symb, int number_of_prod,
+    struct prod grammar[MAX_NUMBER_OF_PROD],
+    struct state state_info[MAX_NUMBER_OF_STATE],
+    struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB],
+    bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int *state_num);
 
-// 读入语法规则
-void read_in_grammar(char* filename);
+// 用于检查给定的字符序列 a 是否是可行结构
+// 该函数会用到状态转移表，因此在调用这个函数之前必须先预处理出状态转移表
+bool check_feasible(
+    struct array a,
+    struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 
-// 打印编号为 prod_id 的产生式
-void print_prod(int prod_id);
-
-// 打印状态
-void print_state(struct state s);
-
-// 打印数组
-void print_array(struct array);
+// 返回语法是否会使得移入规约算法冲突，有冲突返回 true
+bool check_ShiftReduce_ambiguity(
+    int number_of_symb, int number_of_prod,
+    struct prod grammar[MAX_NUMBER_OF_PROD],
+    struct state state_info[MAX_NUMBER_OF_STATE],
+    bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int *state_num);
 ```
 
-4、生成的可执行文件请放在 `./shift_reduce/bin` 路径中
+3、生成的可执行文件请放在 `./shift_reduce/bin` 路径中
 
 ## 分工
 
@@ -77,7 +76,7 @@ lsy: 4
 
 每个语法规则应当对应一个符号到整数的映射，这个映射也应当被记录在文件中并上传到 github 上。（新建这个语法规则的人负责上传这个映射文件，命名就随意了）
 
-映射约定: ***约定起始符对应的整数为0***
+映射约定: **_约定起始符对应的整数为 0_**
 
 ```
 # N 表示符号数量（0-based） M 表示产生式数量（0-based）
@@ -176,9 +175,6 @@ zyy：
 输出格式
 
 每行一个整数 x，若为 -1 表示移入， 否则表示使用第 x 个产生式进行规约 (无需输出步骤次数)
-
-
-
 
 cys 和 lsy 提供的都是函数，zyy 需要使用这些函数来搭建最终的 `main` 函数。
 
