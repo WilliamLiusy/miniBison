@@ -14,31 +14,31 @@
 /* id of productions are 0, 1, ... */
 
 struct prod {
-  int l;   /* the symbol on the left */
-  int *r;  /* the array of symbols on the right */
-  int len; /* the number of symbols on the right */
+	int l;   /* the symbol on the left */
+	int *r;  /* the array of symbols on the right */
+	int len; /* the number of symbols on the right */
 };
 
 /* Given a production like E -> E + E, a handler can be E -> E . + E */
 struct handler {
-  int prod_id;
-  int dot_pos; /* dot is the number of symbols before the dot */
+	int prod_id;
+	int dot_pos; /* dot is the number of symbols before the dot */
 };
 
 struct state {
-  int size;          /* the number of handlers in a state */
-  struct handler *s; /* array of handlers in every state */
+	int size;          /* the number of handlers in a state */
+	struct handler *s; /* array of handlers in every state */
 };
 
 struct trans_result {
-  int t;  /* 0 for shift and 1 for reduce */
-  int id; /* the id of destination state (in the case of shift), or the id of
-             production (in the case of reduction) */
+	int t;  /* 0 for shift and 1 for reduce */
+	int id; /* the id of destination state (in the case of shift), or the id of
+	           production (in the case of reduction) */
 };
 
 struct array {
-  int *elements;
-  int len;
+	int *elements;
+	int len;
 };
 
 // 全局变量
@@ -73,6 +73,9 @@ void getFollow(int number_of_symb, int number_of_prod,
 
 // 预处理出状态转移表以及所有结点上的状态信息
 // 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
+// state_num 会被赋值为最终的状态数
+// state_info 用于存储所有状态的信息
+// trans 用于存储状态转移表
 void pre_trans(
     int number_of_symb, int number_of_prod,
     struct prod grammar[MAX_NUMBER_OF_PROD],
@@ -81,7 +84,7 @@ void pre_trans(
     bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int *state_num);
 
 // 用于检查给定的字符序列 a 是否是可行结构
-// 该函数会用到状态转移表，因此在调用这个函数之前必须先预处理出状态转移表
+// trans 是处理好的状态转移表
 bool check_feasible(
     struct array a,
     struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
@@ -91,7 +94,7 @@ bool check_ShiftReduce_ambiguity(
     int number_of_symb, int number_of_prod,
     struct prod grammar[MAX_NUMBER_OF_PROD],
     struct state state_info[MAX_NUMBER_OF_STATE],
-    bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int *state_num);
+    bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int state_num);
 
 // 以下是一些辅助函数
 

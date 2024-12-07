@@ -142,7 +142,6 @@ void pre_trans();
 ---
 
 lsy：实现如下函数
-**Note: first 和 follow 都是全局变量，都被定义在了 cfg.h 中**
 
 ```
 struct array get_first();
@@ -163,6 +162,13 @@ zyy：
 cys 和 lsy 提供的都是函数，zyy 需要使用这些函数来搭建最终的两个 **接口** 函数。
 
 由于 C 可能需要频繁使用 `malloc` 分配内存，因此在 `main` 函数中要注意内存的回收。
+
+TODO：
+- 函数1：接收语法参数（number_of_symb,number_of_prod,grammar）、用于存储生成的状态转移表的参数（state_num,state_info,trans）。在函数内调用getfirst、getfollow、pretrans来生成状态和状态转移表。
+- 该函数内需要声明first和follow数组。由于这两个数组较大，可能会爆栈，所以要用malloc分配空间（注意回收）。类似的，在测试中如果需要声明trans、grammar等数组，建议使用全局变量以防止爆栈。
+- 函数2：接收状态转移表，以及一个符号序列，进行移入规约。
+- 最好提供相关的函数用于回收grammar、state_info这两个数组中用malloc分配的空间。
+- 测试。
 
 ---
 
