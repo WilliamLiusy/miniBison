@@ -72,6 +72,7 @@ void getFollow(int number_of_symb, int number_of_prod,
                bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB]);
 
 // 预处理出状态转移表以及所有结点上的状态信息
+// 在预处理的时候会顺便检查是否有移入规约冲突，如果有，会输出冲突信息
 // 该函数会使用follow集合，因此在调用这个函数之前必须先预处理出follow集合
 // state_num 会被赋值为最终的状态数
 // state_info 用于存储所有状态的信息
@@ -90,6 +91,7 @@ bool check_feasible(
     struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB]);
 
 // 返回语法是否会使得移入规约算法冲突，有冲突返回 true
+// 暂时有点问题，请不要调用这个函数，pre_trans已经检查语法是否有歧义
 bool check_ShiftReduce_ambiguity(
     int number_of_symb, int number_of_prod,
     struct prod grammar[MAX_NUMBER_OF_PROD],
@@ -126,8 +128,8 @@ struct array get_available_prod(int current_state, struct array *state_history,
 // state_history 是记录状态的栈，用于查找可用的规约
 // dfs_trans 会调用 get_available_prod
 void dfs_trans(
-    struct array *state_history, int number_of_symb, int number_of_prod,
-    struct prod grammar[MAX_NUMBER_OF_PROD],
+    struct array *state_history, struct array *symb_history, int number_of_symb,
+    int number_of_prod, struct prod grammar[MAX_NUMBER_OF_PROD],
     struct state state_info[MAX_NUMBER_OF_STATE],
     struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB],
     bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB], int *state_num);
