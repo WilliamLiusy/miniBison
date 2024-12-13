@@ -79,7 +79,7 @@ void test_trans(
 
 int main() {
 	// printf("OK");
-	char *filename = "./shift_reduce/data/grammar_array.txt";
+	char *filename = "./shift_reduce/data/grammar_simple_languang.txt";
 	int number_of_symb = 0, number_of_prod = 0;
 	struct prod grammar[MAX_NUMBER_OF_PROD];
 	read_in_grammar(filename, &number_of_symb, &number_of_prod, grammar);
