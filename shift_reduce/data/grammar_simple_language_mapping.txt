@@ -17,3 +17,5 @@ CONST -> 12
 DO -> 16
 ; -> 17
 BODY_COM -> 18
+TRUE -> 19
+FALSE -> 20
