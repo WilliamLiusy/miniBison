@@ -16,6 +16,7 @@ CONST -> 12
 + -> 15
 DO -> 16
 ; -> 17
-BODY_COM -> 18
-TRUE -> 19
-FALSE -> 20
+{ -> 18
+} -> 19
+TRUE -> 20
+FALSE -> 21
