@@ -1,0 +1,7 @@
+START -> E
+E -> G
+E -> E + G
+E -> E - G
+G -> ( E )
+G -> ID
+E -> - G

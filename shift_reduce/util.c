@@ -430,7 +430,8 @@ void getFollow(int number_of_symb, int number_of_prod,
                bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB],
                bool first[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB]) {
 	// I should ignore 0th production, which is START -> x
-	for (int i = 1; i < number_of_prod; i++) {
+	// change 1 to 0?
+	for (int i = 0; i < number_of_prod; i++) {
 		for (int j = 0; j + 1 < grammar[i].len; j++) {
 			for (int u = 0; u < number_of_symb; u++) {
 				if (first[grammar[i].r[j + 1]][u]) {

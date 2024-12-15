@@ -1,0 +1,16 @@
+input: ID * ID * ID
+
+output: 
+|ID * ID * ID
+ID| * ID * ID
+G| * ID * ID
+F| * ID * ID
+F *| ID * ID
+F * ID| * ID
+F * G| * ID
+F| * ID
+F *| ID
+F * ID|
+F * G|
+F|
+E|

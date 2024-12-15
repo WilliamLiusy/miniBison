@@ -9,6 +9,10 @@
 #define MAX_NUMBER_OF_SYMB (100)
 #define MAX_NUMBER_OF_PROD (1000)
 #define MAX_NUMBER_OF_STATE (10000)
+#define MAX_NUMBER_OF_INPUT (1000)
+
+
+#define INITIAL_CAPACITY (1000) // 用于动态扩增输出序列的长度
 
 /* id of symbols are 0, 1, ... */
 /* id of productions are 0, 1, ... */
@@ -149,4 +153,61 @@ void printFirst(int number_of_symb,
 void printFollow(int number_of_symb,
                  bool follow[MAX_NUMBER_OF_SYMB][MAX_NUMBER_OF_SYMB]);
 
+
+
+
+// 定义需要使用的栈
+
+
+typedef struct {
+    //
+    int* state;
+    int* len;
+    int** content;
+    //
+    int top;      // 栈顶指针
+    int capacity; // 栈的容量
+} Stack;
+
+void init_stack(Stack *stack);
+int is_empty(Stack *stack);
+int is_full(Stack *stack);
+void resize_stack(Stack *stack);
+void push(Stack *stack, int state_value, int len_value, int* content_value);
+void pop(Stack *stack);
+int peek_state(Stack* stack);
+int peek_len(Stack* stack);
+int* peek_content(Stack* stack);
+void free_stack(Stack *stack);
+
+// 定义动态数组的结构体
+
+
+typedef struct {
+    int *data;      // 存储数据的数组
+    int size;       // 当前数组中元素的数量
+    int capacity;   // 数组的容量
+} OutputSequence;
+
+// 初始化动态数组
+void init_output_sequence(OutputSequence *seq);
+void resize_output_sequence(OutputSequence *seq);
+void append_to_output_sequence(OutputSequence *seq, int value);
+int get_from_output_sequence(OutputSequence *seq, int index);
+void free_output_sequence(OutputSequence *seq);
+
+
+
+void shift_reduce(int number_of_symb,
+                  struct prod grammer[MAX_NUMBER_OF_PROD],
+                  struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB],
+                  int input[MAX_NUMBER_OF_INPUT], int length_of_input,
+                  OutputSequence* output);
+
+
+void GenerateStates(int number_of_symb, int number_of_prod,
+                    struct prod grammer[MAX_NUMBER_OF_PROD],
+                    struct state state_info[MAX_NUMBER_OF_STATE],
+                    struct trans_result trans[MAX_NUMBER_OF_STATE][MAX_NUMBER_OF_SYMB],
+                    int* state_num);
 #endif // CFG_H_INCLUDED
