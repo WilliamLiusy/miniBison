@@ -1,6 +1,11 @@
 import subprocess
 import os
 
+# 在这里定义要验证的语法名称以及样例数量
+grammar_name = ["add_minus", "add_multiply", "simple_language"]
+# range(1,15) 生成 1 到 14 的整数，因此表示有 14 组样例
+instance_indices = [range(1, 15), range(1, 15), range(1, 15)]
+
 # 定义两个程序的路径
 validation_path = "./validation.py"  # 第一个程序的路径
 
@@ -8,11 +13,6 @@ validation_path = "./validation.py"  # 第一个程序的路径
 if not os.path.exists(validation_path):
     print(f"Error: File not found: {validation_path}")
     exit(1)
-
-# 在这里定义要验证的语法名称以及样例数量
-grammar_name = ["add_minus", "add_multiply", "simple_language"]
-# range(1,15) 生成 1 到 14 的整数，因此表示有 14 组样例
-instance_indices = [range(1, 15), range(1, 15), range(1, 15)]
 
 for grammar_index in range(len(grammar_name)):
     for instance_index in instance_indices[grammar_index]:
